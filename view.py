@@ -21,6 +21,7 @@ WIDTH = 128
 HEIGHT = 64
 VERSION = "1.0"
 BASE_TITLE = f"Quansheng K5Viewer v{VERSION} by F4HWN (mod Boris)"
+DEBUG = 0
 
 frame_count=0
 last_time=0
@@ -79,15 +80,6 @@ def display():
         last_time = now
         frame_lost = 0
                 
-####################################################################################################
-##
-## Si on change de tab et qu'on revien sur la 1er, on redessine l'ecran
-##
-def onChange_tab(event):
-	nb = event.widget
-	tab = nb.select()
-	if (tab == ".!notebook.!frame"):
-		print("click")
 
 ####################################################################################################
 ##
@@ -142,15 +134,20 @@ def timer_app():
                 asciiSerial += chr(t)
             else:
                 asciiSerial += "."
-    
-        if (len(asciiSerial) >= 16):
-            print(hexaSerial,"\t", asciiSerial)
+        
+        if (DEBUG):
+            if (len(asciiSerial) >= 16):
+                print(hexaSerial,"\t", asciiSerial)
+                hexaSerial = ""
+                asciiSerial = ""
+        else:
             hexaSerial = ""
             asciiSerial = ""
 
     if (payload):
         display()
-    mySerial.write(b'\x55\xAA\x00\x00')  # Keepalive frame
+
+    mySerial.write(b'\x55\xAA\x00\x00')  # on est encore la :)
     app.after(50, timer_app)
 
 
@@ -244,7 +241,7 @@ pic.grid()
 color = [COLOR_SETS["o"][2], COLOR_SETS["o"][1]]
 
 if (mySerial != ""):
-    mySerial.write(b'\x55\xAA\x00\x00')  # Keepalive frame
+    mySerial.write(b'\x55\xAA\x00\x00')  # toc toc, on est la
     timer_app()
 
 try:
